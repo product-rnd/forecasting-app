@@ -54,10 +54,16 @@ def main():
 
     # Allow users to select the target column (y)
     target_column_default = 'Total Quantity'
-    target_column = st.sidebar.selectbox('Select Target Column (`y`) 👇', options=df.columns, index=df.columns.get_loc(target_column_default))
-
     date_column = 'Order Month'
 
+    # Get list of column names
+    column_names = df.columns.to_list()
+
+    # Remove 'Order Month' from the list
+    if date_column in column_names:
+        column_names.remove(date_column)
+
+    target_column = st.sidebar.selectbox('Select Target Column (`y`) 👇', options=column_names, index=df.columns.get_loc(target_column_default))
 
     if target_column == 'Total Quantity':
         st.subheader('🛍️ Monthly Demand Forecasting - Walmart Retail Stores')

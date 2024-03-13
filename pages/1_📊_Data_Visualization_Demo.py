@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import seaborn as sns
+import matplotlib.cm as cm
 
 # Function to wrangle data
 def wrangle_data(file_path):
@@ -35,13 +36,17 @@ def plot_daily_data(data, column_name):
         'Order ID': 'count',
         column_name: 'sum'
     }).reset_index()
+
+    # Reorder the data by weekdays
+    data_grouped['Order Day'] = pd.Categorical(data_grouped['Order Day'], categories=weekdays, ordered=True)
+    data_grouped = data_grouped.sort_values('Order Day')
+
     fig, ax = plt.subplots(figsize=(12, 5))
-    data_grouped.plot(x="Order Day", y=column_name, ax=ax, color=color[2])
+    data_grouped.plot(x="Order Day", y=column_name, ax=ax, color=color[0])
     ax.yaxis.set_major_formatter(FuncFormatter(lambda x, p: format(int(x), ',')))
     plt.xlabel('Order Day')
     plt.ylabel(f'Total {column_name.capitalize()}')
     plt.title(f'Daily {column_name.capitalize()} Wahmart.inc 2020-2023')
-    plt.legend(title='Category')
     st.pyplot(fig)
 
 # Function to plot monthly data
@@ -63,7 +68,8 @@ def plot_monthly_data(data, column_name):
 def plot_category_data(data, column_name):
     category_sales = data.groupby('Category')[column_name].sum().sort_values()
     fig, ax = plt.subplots(figsize=(10, 6))
-    category_sales.plot(kind='barh', color=color)
+    norm = plt.Normalize(category_sales.values.min(), category_sales.values.max())
+    category_sales.plot(kind='barh', color=cm.Oranges(norm(category_sales.values)))
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, p: format(int(x), ',')))
     plt.xlabel(f'Total {column_name} ($)')
     plt.ylabel('Category')

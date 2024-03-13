@@ -90,7 +90,7 @@ def main():
 
     # Display the filtered forecast data
     st.subheader('📊 Forecast Data for Selected Date Range:')
-    st.write(filtered_forecast_data)
+    st.write(filtered_forecast_data[['ds','yhat','yhat_upper', 'yhat_lower','trend']])
 
     # Copyright notice
     st.sidebar.write('---')
